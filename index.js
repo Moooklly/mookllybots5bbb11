@@ -17,14 +17,20 @@ app.listen(8000, () => {
 });
 
 function createBot() {
+// ✅ دعم لاعبين البيدروك (Floodgate)
+const bedrockPrefix = config.server['bedrock-prefix'] || '.'; // ممكن تغيرها من settings.json
+
 const bot = mineflayer.createBot({
-  username: config['bot-account']['username'],
+  username: config.server['bedrock-enabled']
+    ? `${bedrockPrefix}${config['bot-account']['username']}`
+    : config['bot-account']['username'],
   password: config['bot-account']['password'],
   auth: config['bot-account']['type'],
   host: config.server.ip,
   port: config.server.port,
   version: config.server.version,
 });
+
 
 
   bot.loadPlugin(pathfinder);
