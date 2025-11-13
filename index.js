@@ -210,18 +210,7 @@ bot.on('message', (jsonMsg) => {
       return;
     }
 
-    // ===== أوامر النوم التلقائي =====
-    if (message.toLowerCase() === '!sleepon') {
-      autoSleepEnabled = true;
-      bot.chat(`💤 تم تفعيل النوم التلقائي! البوت سينام تلقائي عندما يأتي الليل.`);
-      return;
-    }
-
-    if (message.toLowerCase() === '!sleepoff') {
-      autoSleepEnabled = false;
-      bot.chat(`🌅 تم إيقاف النوم التلقائي.`);
-      return;
-    }
+   
 
     // ===== باقي أوامرك =====
     if (args[0].toLowerCase() === '!s') {
@@ -245,12 +234,6 @@ bot.on('message', (jsonMsg) => {
       return;
     }
 
-    if (args[0].toLowerCase() === '!we') {
-      bot.chat(`🌅 تم تنظيف الجو`);
-      bot.chat(`/weather clear`);
-      return;
-    }
-
     if (message.toLowerCase().includes('sp?')) bot.chat(`Hi ${username}`);
     if (message === '!help') bot.chat(`Commands: !tpa <@> , !we`);
     if (message === '!time')
@@ -258,26 +241,6 @@ bot.on('message', (jsonMsg) => {
 
   } catch (err) {
     console.log('[ERROR chat parser]', err.message);
-  }
-});
-
-// ===== نظام النوم التلقائي =====
-bot.on('time', () => {
-  if (!autoSleepEnabled) return;
-
-  const time = bot.time.timeOfDay;
-  const isNight = bot.time.isNight;
-
-  if ((isNight || (time > 13000 && time < 23000)) && !hasSleptThisNight) {
-    hasSleptThisNight = true;
-    bot.chat('/time set day');
-    bot.chat('💤 نام في السرير بسبب تفعيل النوم التلقائي !');
-    bot.chat('تقدر توقف هاذا الشي عن طريق ( !sleepoff )');
-    console.log('[AutoSleep] الليل جاء، تم تحويل الوقت إلى صباح.');
-  }
-
-  if (!isNight && time < 13000) {
-    hasSleptThisNight = false;
   }
 });
   });
