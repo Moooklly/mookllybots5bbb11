@@ -1,0 +1,59 @@
+{
+  "bot-account": {
+    "username": "mookllyBotS5B", 
+    "password": "",
+    "type": "mojang"
+  },
+
+  "server": {
+    "ip": "S5BServer2.aternos.me", 
+    "port": 59668,   
+    "version": "1.12.1"
+  },
+  
+  "position": {
+    "enabled": false,
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+
+  "utils": {
+    "auto-auth": {
+      "enabled": false,
+      "password": ""
+    },
+
+    "anti-afk": {
+      "enabled": true,
+      "sneak": true
+    },
+
+    "chat-messages": {
+      "enabled": true,
+      "repeat": true,
+      "repeat-delay": 120,
+
+      "messages": [
+        "صلو على النبي",
+        "اذكر الله",
+        "استغفر ربك",
+        "قول لا إله إلا الله",
+        "اللهم صل وسلم على نبينا محمد", 
+        "سبحان الله وبحمده",
+        "رضيت بالله ربًا وبالإسلام دينًا وبمحمد ﷺ نبيًا",
+        "اللهم اجعلنا من الذاكرين الشاكرين",
+        "اذكروا الله كثيرًا لعلكم تفلحون",
+        "استغفر الله وأتوب إليه",
+        "اللهم اغفر لنا ولوالدينا",
+        "لا تجعل اللعب يلهيك عن ذكر الله وعن الصلاة",
+        "لا تجعل اللعب يلهيك عن الصلاة والاستغفار، فهما راحة القلب.",
+        "موكلي عمك اذا ما صليت على النبي"
+      ]
+    },
+
+    "chat-log": true,
+    "auto-reconnect": true,
+    "auto-recconect-delay": 500
+  }
+}
