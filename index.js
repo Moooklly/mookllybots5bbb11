@@ -137,138 +137,149 @@ const bot = mineflayer.createBot({
       }
     }
 
-    // ✅ تخزين طلبات TPA والتبريد
-    const tpaRequests = {};
-    const cooldowns = {};
+// ✅ تخزين طلبات TPA والتبريد
+const tpaRequests = {};
+const cooldowns = {};
 
-    // ===============================
-    // ✅ أوامر الشات
-    // ===============================
-    bot.on('chat', (username, message) => {
-      if (username === bot.username) return;
+// ===============================
+// ✅ أوامر البيدروك فقط (Floodgate)
+// ===============================
+bot.on('message', (jsonMsg) => {
+  try {
+    const text = jsonMsg.toString();
+    const match = text.match(/^<(.+?)>\s(.+)/);
+    if (!match) return;
 
-      const args = message.trim().split(' ');
-      const now = Date.now();
-      const cooldown = cooldowns[username];
+    const username = match[1];
+    const message = match[2];
+    if (username === bot.username) return;
 
-      // ===== أمر TPA =====
-      if (args[0].toLowerCase() === '!tpa' && args[1]) {
-        const target = args[1];
+    const args = message.trim().split(' ');
+    const now = Date.now();
+    const cooldown = cooldowns[username];
 
-        if (cooldown && now - cooldown < 300000) {
-          const remaining = Math.ceil((300000 - (now - cooldown)) / 60000);
-          return bot.chat(`/tell ${username} ⌛ انتظر ${remaining} دقيقة`);
+    // ===== أمر TPA =====
+    if (args[0].toLowerCase() === '!tpa' && args[1]) {
+      const target = args[1];
+
+      if (cooldown && now - cooldown < 300000) {
+        const remaining = Math.ceil((300000 - (now - cooldown)) / 60000);
+        return bot.chat(`/tell ${username} ⌛ انتظر ${remaining} دقيقة`);
+      }
+
+      tpaRequests[target] = { from: username, time: now };
+      cooldowns[username] = now;
+
+      bot.chat(`/tell ${username} 📨 تم ارسال طلبك إلى ${target}`);
+      bot.chat(`/tell ${target} 📨 ${username} يريد الانتقال إليك!`);
+      bot.chat(`/tell ${target} اكتب: !ac للقبول`);
+      bot.chat(`/tell ${target} أو: !dn للرفض`);
+
+      setTimeout(() => {
+        if (tpaRequests[target] && tpaRequests[target].from === username) {
+          bot.chat(`/tell ${target} ❌ لم ترد على الطلب`);
+          bot.chat(`/tell ${username} ❌ تم رفض طلبك تلقائيًا`);
+          delete tpaRequests[target];
         }
+      }, 120000); // دقيقتين
+      return;
+    }
 
-        tpaRequests[target] = { from: username, time: now };
-        cooldowns[username] = now;
+    // ===== قبول =====
+    if (args[0].toLowerCase() === '!ac') {
+      const request = tpaRequests[username];
+      if (!request)
+        return bot.chat(`/tell ${username} ❌ لا يوجد أي طلب TPA.`);
 
-        bot.chat(`/tell ${username} 📨 تم ارسال طلبك إلى ${target}`);
-        bot.chat(`/tell ${target} 📨 ${username} يريد الانتقال إليك!`);
-        bot.chat(`/tell ${target} اكتب: !ac للقبول`);
-        bot.chat(`/tell ${target} أو: !dn للرفض`);
+      const from = request.from;
+      bot.chat(`/tell ${from} ✅ تم قبول طلبك`);
+      bot.chat(`/tp ${from} ${username}`);
+      delete tpaRequests[username];
+      return;
+    }
 
-        setTimeout(() => {
-          if (tpaRequests[target] && tpaRequests[target].from === username) {
-            bot.chat(`/tell ${target} ❌ لم ترد على الطلب`);
-            bot.chat(`/tell ${username} ❌ تم رفض طلبك تلقائيًا`);
-            delete tpaRequests[target];
-          }
-        }, 120000); // دقيقتين
-        return;
-      }
+    // ===== رفض =====
+    if (args[0].toLowerCase() === '!dn') {
+      const request = tpaRequests[username];
+      if (!request)
+        return bot.chat(`/tell ${username} ❌ لا يوجد أي طلب TPA.`);
 
-      // ===== قبول =====
-      if (args[0].toLowerCase() === '!ac') {
-        const request = tpaRequests[username];
-        if (!request)
-          return bot.chat(`/tell ${username} ❌ لا يوجد أي طلب TPA.`);
+      const from = request.from;
+      bot.chat(`/tell ${from} ❌ تم رفض طلبك.`);
+      delete tpaRequests[username];
+      return;
+    }
 
-        const from = request.from;
-        bot.chat(`/tell ${from} ✅ تم قبول طلبك`);
-        bot.chat(`/tp ${from} ${username}`);
-        delete tpaRequests[username];
-        return;
-      }
+    // ===== أوامر النوم التلقائي =====
+    if (message.toLowerCase() === '!sleepon') {
+      autoSleepEnabled = true;
+      bot.chat(`💤 تم تفعيل النوم التلقائي! البوت سينام تلقائي عندما يأتي الليل.`);
+      return;
+    }
 
-      // ===== رفض =====
-      if (args[0].toLowerCase() === '!dn') {
-        const request = tpaRequests[username];
-        if (!request)
-          return bot.chat(`/tell ${username} ❌ لا يوجد أي طلب TPA.`);
+    if (message.toLowerCase() === '!sleepoff') {
+      autoSleepEnabled = false;
+      bot.chat(`🌅 تم إيقاف النوم التلقائي.`);
+      return;
+    }
 
-        const from = request.from;
-        bot.chat(`/tell ${from} ❌ تم رفض طلبك.`);
-        delete tpaRequests[username];
-        return;
-      }
+    // ===== باقي أوامرك =====
+    if (args[0].toLowerCase() === '!s') {
+      const x = 381, y = 63, z = 446;
+      bot.chat(`/tell ${username} 🚀 تم نقلك الآن إلى X:${x} Y:${y} Z:${z}`);
+      bot.chat(`/tp ${username} ${x} ${y} ${z}`);
+      return;
+    }
 
-      // ===== أوامر النوم التلقائي =====
-      if (message.toLowerCase() === '!sleepon') {
-        autoSleepEnabled = true;
-        bot.chat(`💤 تم تفعيل النوم التلقائي! البوت سينام تلقائي عندما يأتي الليل.`);
-        return;
-      }
+    if (args[0].toLowerCase() === '!123123131') {
+      const x = -649, y = 71, z = -3457;
+      bot.chat(`/tell ${username} 🚀 تم نقلك الآن إلى X:${x} Y:${y} Z:${z}`);
+      bot.chat(`/tp ${username} ${x} ${y} ${z}`);
+      return;
+    }
 
-      if (message.toLowerCase() === '!sleepoff') {
-        autoSleepEnabled = false;
-        bot.chat(`🌅 تم إيقاف النوم التلقائي.`);
-        return;
-      }
+    if (args[0].toLowerCase() === '!123123123123123') {
+      const x = -2136, y = 65, z = -74;
+      bot.chat(`/tell ${username} 🚀 تم نقلك الآن إلى X:${x} Y:${y} Z:${z}`);
+      bot.chat(`/tp ${username} ${x} ${y} ${z}`);
+      return;
+    }
 
-      // ===== باقي أوامرك =====
-      if (args[0].toLowerCase() === '!s') {
-        const x = 381, y = 63, z = 446;
-        bot.chat(`/tell ${username} 🚀 تم نقلك الآن إلى X:${x} Y:${y} Z:${z}`);
-        bot.chat(`/tp ${username} ${x} ${y} ${z}`);
-        return;
-      }
+    if (args[0].toLowerCase() === '!we') {
+      bot.chat(`🌅 تم تنظيف الجو`);
+      bot.chat(`/weather clear`);
+      return;
+    }
 
-      if (args[0].toLowerCase() === '!123123131') {
-        const x = -649, y = 71, z = -3457;
-        bot.chat(`/tell ${username} 🚀 تم نقلك الآن إلى X:${x} Y:${y} Z:${z}`);
-        bot.chat(`/tp ${username} ${x} ${y} ${z}`);
-        return;
-      }
+    if (message.toLowerCase().includes('sp?')) bot.chat(`Hi ${username}`);
+    if (message === '!help') bot.chat(`Commands: !tpa <@> , !we`);
+    if (message === '!time')
+      bot.chat(`/tell ${username} ⌛ Time: ${Math.floor(bot.time.timeOfDay / 1000)}`);
 
-      if (args[0].toLowerCase() === '!123123123123123') {
-        const x = -2136, y = 65, z = -74;
-        bot.chat(`/tell ${username} 🚀 تم نقلك الآن إلى X:${x} Y:${y} Z:${z}`);
-        bot.chat(`/tp ${username} ${x} ${y} ${z}`);
-        return;
-      }
+  } catch (err) {
+    console.log('[ERROR chat parser]', err.message);
+  }
+});
 
-      if (args[0].toLowerCase() === '!we') {
-        bot.chat(`🌅 تم تنظيف الجو`);
-        bot.chat(`/weather clear`);
-        return;
-      }
+// ===== نظام النوم التلقائي =====
+bot.on('time', () => {
+  if (!autoSleepEnabled) return;
 
-      if (message.toLowerCase().includes('sp?')) bot.chat(`Hi ${username}`);
-      if (message === '!help') bot.chat(`Commands: !tpa <@> , !we`);
-      if (message === '!time')
-        bot.chat(`/tell ${username} ⌛ Time: ${Math.floor(bot.time.timeOfDay / 1000)}`);
-    });
+  const time = bot.time.timeOfDay;
+  const isNight = bot.time.isNight;
 
-    // ===== نظام النوم التلقائي =====
-    bot.on('time', () => {
-      if (!autoSleepEnabled) return;
+  if ((isNight || (time > 13000 && time < 23000)) && !hasSleptThisNight) {
+    hasSleptThisNight = true;
+    bot.chat('/time set day');
+    bot.chat('💤 نام في السرير بسبب تفعيل النوم التلقائي !');
+    bot.chat('تقدر توقف هاذا الشي عن طريق ( !sleepoff )');
+    console.log('[AutoSleep] الليل جاء، تم تحويل الوقت إلى صباح.');
+  }
 
-      const time = bot.time.timeOfDay;
-      const isNight = bot.time.isNight;
-
-      if ((isNight || (time > 13000 && time < 23000)) && !hasSleptThisNight) {
-        hasSleptThisNight = true;
-        bot.chat('/time set day');
-        bot.chat('💤 نام في السرير بسبب تفعيل النوم التلقائي !');
-        bot.chat('تقدر توقف هاذا الشي عن طريق ( !sleepoff )');
-        console.log('[AutoSleep] الليل جاء، تم تحويل الوقت إلى صباح.');
-      }
-
-      if (!isNight && time < 13000) {
-        hasSleptThisNight = false;
-      }
-    });
+  if (!isNight && time < 13000) {
+    hasSleptThisNight = false;
+  }
+});
   });
 
   bot.on('goal_reached', () => {
