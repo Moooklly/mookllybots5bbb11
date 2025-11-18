@@ -215,15 +215,22 @@ bot.on('message', (jsonMsg) => {
       return;
     }
 
-    if (args[0].toLowerCase() === '!123123131') {
-      const x = -649, y = 71, z = -3457;
+    if (args[0].toLowerCase() === '!س') {
+      const x = 381, y = 63, z = 446;
       bot.chat(`/tell ${username} 🚀 ز:${z} و:${y} س:${x} :Z X ىلا نلآ كـلقت نم`);
       bot.chat(`/tp ${username} ${x} ${y} ${z}`);
       return;
     }
 
-    if (args[0].toLowerCase() === '!123123123123123') {
-      const x = -2136, y = 65, z = -74;
+    if (args[0].toLowerCase() === '!n') {
+      const x = 346, y = 32, z = 2489;
+      bot.chat(`/tell ${username} 🚀 ز:${z} و:${y} س:${x} :Z X ىلا نلآ كـلقت نم`);
+      bot.chat(`/tp ${username} ${x} ${y} ${z}`);
+      return;
+    }
+
+     if (args[0].toLowerCase() === '!ى') {
+      const x = 346, y = 32, z = 2489;
       bot.chat(`/tell ${username} 🚀 ز:${z} و:${y} س:${x} :Z X ىلا نلآ كـلقت نم`);
       bot.chat(`/tp ${username} ${x} ${y} ${z}`);
       return;
