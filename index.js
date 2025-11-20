@@ -336,6 +336,4 @@ const bot = mineflayer.createBot({
   );
 }
 
-}
-
 createBot();
