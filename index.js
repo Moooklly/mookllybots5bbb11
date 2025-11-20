@@ -236,8 +236,20 @@ bot.on('message', (jsonMsg) => {
       return;
     }
 
+         if (args[0].toLowerCase() === '!nv') {
+      bot.chat(`/tell ${username} مت كئاطعا تيانلا نجيف`);
+      bot.chat(`/effect give ${username} minecraft:night_vision infinite 100 true`);
+      return;
+    }
+
+             if (args[0].toLowerCase() === '!ىر') {
+      bot.chat(`/tell ${username} مت كئاطعا تيانلا نجيف`);
+      bot.chat(`/effect give ${username} minecraft:night_vision infinite 100 true`);
+      return;
+    }
+
     if (message.toLowerCase().includes('sp?')) bot.chat(`Hi ${username}`);
-    if (message === '!help') bot.chat(`Commands: !tpa <@> , !we`);
+    if (message === '!help') bot.chat(`Commands: !tpa <@>, !we, !s, !n, !nv`);
     if (message === '!time')
       bot.chat(`/tell ${username} ⌛ Time: ${Math.floor(bot.time.timeOfDay / 1000)}`);
 
