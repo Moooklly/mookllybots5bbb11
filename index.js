@@ -280,7 +280,7 @@ bot.once('spawn', () => {
       }
 
       if (message.toLowerCase().includes('sp?')) bot.chat(`Hi ${username}`);
-      if (message === '!help') bot.chat(`Commands: !tpa <@> , !we`);
+      if (message === '!help') bot.chat(`Commands: !tpa <@> , !we, !s, !n, !nv, !cl, !sleepon, !sleepoff`);
       if (message === '!time') bot.chat(`/tell ${username} ⌛ Time: ${Math.floor(bot.time.timeOfDay / 1000)}`);
 
     } catch (err) {
