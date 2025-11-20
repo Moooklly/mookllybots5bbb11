@@ -1,3 +1,5 @@
+function createBot() {
+
 const mineflayer = require('mineflayer');
 const Movements = require('mineflayer-pathfinder').Movements;
 const pathfinder = require('mineflayer-pathfinder').pathfinder;
@@ -332,6 +334,8 @@ const bot = mineflayer.createBot({
   bot.on('error', (err) =>
     console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m')
   );
+}
+
 }
 
 createBot();
